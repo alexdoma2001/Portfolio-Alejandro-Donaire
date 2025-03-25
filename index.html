@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon-32x32.png">
+    <title>Alejandro Donaire Machío</title>
+    <style>
+        /* Fondo general */
+        body {
+            background-color: rgb(16, 20, 44);
+            color: white;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            overflow: hidden;
+            /* Evita el scroll en el body */
+        }
+
+        /* Contenedor principal */
+        .container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+        }
+
+                /* Contenedor de las cards */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            /* Las cards se apilan verticalmente */
+            width: 100%;
+            /* Las cards ocupan todo el ancho disponible */
+            gap: 20px;
+            /* Espacio entre las cards */
+        }
+
+        .cards-container-lenguajes {
+            display: flex;
+            flex-wrap: wrap; /* Permite que las cards se vayan a la siguiente línea */
+            justify-content: center; /* Centra las cards en la fila */
+            align-items: center;
+            gap: 20px;
+        }
+
+
+        /* Estilos para las cards */
+        .card {
+            background-color: rgba(26, 32, 44, 0.5);
+            /* Fondo transparente oscuro */
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            width: 100%;
+            /* Ocupa todo el ancho disponible */
+            height: auto;
+            /* Ajusta la altura según el contenido */
+            transition: transform 0.3s ease, background-color 0.3s ease, margin-top 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: row;
+            /* Coloca los elementos en fila (lado a lado) */
+            gap: 20px;
+            /* Espacio entre los dos bloques */
+        }
+
+        /* Efecto al pasar el ratón */
+        .card:hover {
+            transform: scale(1.05);
+            /* Aumenta el tamaño de la card */
+            margin-top: 10px;
+            /* Desplaza la card hacia abajo */
+            background-color: rgba(128, 128, 128, 0.21);
+            /* Fondo gris transparente cuando se pasa el ratón */
+        }
+
+        /* Título de la card */
+        .card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        /* Descripción de la card */
+        .card p {
+            font-size: 1rem;
+        }
+
+
+        /* Solo afecta a las tarjetas de lenguajes */
+        .card-lenguaje {
+            max-width: 300px;
+            background-color: rgba(26, 32, 44, 0.5);
+            border-radius: 10px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* Efecto hover */
+        .card-lenguaje:hover {
+            transform: scale(1.05);
+            background-color: rgba(128, 128, 128, 0.21);
+            margin-top: 0;
+        }
+
+        .card-otros {
+            max-width: 300px;
+            text-align: center;
+            align-items: center;
+        }
+
+        /* Descripción */
+        .descripcion {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .enlaces {
+            display: flex;
+            justify-content: center;
+            /* Centra los iconos horizontalmente */
+            gap: 20px;
+            /* Espacio entre los iconos */
+            position: absolute;
+            top: 100%;
+            /* Los posiciona al fondo */
+            left: 50%;
+            transform: translateX(-50%);
+            /* Centra los iconos horizontalmente */
+        }
+
+        .fecha {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: aqua;
+        }
+
+        /* Lado izquierdo - fijo */
+        .lado-izquierdo {
+            width: 40vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            padding-left: 50px;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        /* Nombre y título */
+        .lado-izquierdo h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .lado-izquierdo h2 {
+            font-size: 2rem;
+            position: relative;
+            text-align: center;
+        }
+
+                /* Lado derecho - scrolleable */
+        .lado-derecho {
+            width: 60vw;
+            padding-left: 70px;
+            padding-right: 70px;
+            margin-left: 40vw;
+            /* Mueve la parte derecha */
+            overflow-y: auto;
+            height: 100vh;
+            scrollbar-width: thin;
+            /* Personaliza el scroll en Firefox */
+        }
+
+        /* Contenedor izquierdo (Fecha) */
+        .left-content {
+            flex: 0 0 30%;
+            /* Ocupa el 20% de la card */
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Efecto de luz */
+        .luz {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(600px at var(--x, 50%) var(--y, 50%), rgba(29, 78, 216, 0.15), transparent 80%);
+            pointer-events: none;
+            transition: 0.1s ease-out;
+            z-index: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+
+        .nav-links a {
+            /* Seleccionamos los enlaces dentro de .nav-links */
+            color: white;
+            font-size: 1.4rem;
+            /* Aumentamos el tamaño de la fuente */
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+        }
+
+        .nav-links a:hover {
+            color: gold;
+            transform: scale(1.1);
+        }
+
+        .nav-links li {
+            position: relative;
+            padding: 10px;
+            list-style: none;
+        }
+
+        .nav-links li .estrella {
+            position: absolute;
+            left: -25px;
+            /* Mantiene la estrella a la izquierda del texto */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: transform 0.5s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .nav-links li.active .estrella {
+            opacity: 1;
+        }
+
+        .nav-links li.active a {
+            transform: translateX(10px);
+            /* Desplaza el enlace 10px a la derecha */
+            color: gold;
+            /* Cambia el color del enlace a dorado cuando está activo */
+        }
+
+        .oculto {
+            display: none;
+        }
+
+        p {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1.1rem;
+            justify-content: flex-start;
+            word-spacing: 1px;
+        }
+
+        .progress-bar {
+            width: 200px;  /* Ancho de la barra */
+            height: 10px;  /* Altura de la barra */
+            background-color: rgba(255, 255, 255, 0.2);  /* Color de fondo */
+            border-radius: 5px; /* Bordes redondeados */
+            overflow: hidden;  /* Evita que el contenido sobresalga */
+            align-self: center;
+        }
+
+        /* Barra de progreso interna */
+        .progress {
+            height: 100%;
+            background-color: aqua; /* Color de la barra */
+            transition: width 2s ease-in-out; /* Animación suave */
+        }
+
+        .left-content{
+            color: white;
+        }
+
+
+        /* Contenedor derecho (Título, subtítulo, descripción) */
+        .right-content {
+            flex: 1;
+            /* Ocupa el 80% restante */
+            display: flex;
+            flex-direction: column;
+            /* Organiza los elementos verticalmente */
+        }
+
+
+        /* Secciones */
+        section {
+            padding: 20px;
+            padding-right: 10%;
+        }
+
+        /* Subtítulo */
+        .subtitulo {
+            font-size: 1.1rem;
+            font-weight: normal;
+            margin-bottom: 10px;
+            margin-block-start: 0px;
+        }
+
+        /* Título */
+        .titulo {
+            font-weight: bold;
+            margin-top: 12px;
+        }
+
+        .texto-descriptivo {
+            color: #94A3B8;
+            word-spacing: 1px;
+            line-height: 1.4;
+        }
+
+        .texto-negrita {
+            color: rgb(226 232 240);
+            font-weight: bold;
+        }
+
+
+        #sobre-mi {
+            margin-top: 50px;
+            padding-bottom: 50px;
+            min-height: 60vh; /* La sección se expandirá si el contenido es mayor que el 70vh */
+        }
+
+        #estudios{
+            min-height: 30vh;
+            padding-bottom: 90px;
+        }
+
+        #experiencia {
+            margin-top: 0px;
+            min-height: 100vh; /* Lo mismo para la sección de experiencia */
+            margin-bottom: 50px;
+        }
+
+        #lenguajes {
+            min-height: 60vh; /* Lo mismo para la sección de experiencia */
+            margin-right: 0;
+            margin-left: 0;
+            
+        }
+
+        #otros-datos {
+            min-height: 60vh; /* Lo mismo para la sección de experiencia */
+            margin-right: 0;
+            margin-left: 0;
+            
+        }
+
+
+
+        /* Esto ya es pantalla movil */
+        /* En la media query de pantallas pequeñas */
+        /* En la media query de pantallas pequeñas */
+        @media (max-width: 800px) {
+            .container {
+                display: flex;
+                flex-direction: column;
+                /* Apilar los elementos verticalmente */
+                height: auto;
+                /* Deja que el contenedor crezca según el contenido */
+            }
+
+            .cards-container {
+                display: flex;
+                flex-direction: column;
+                /* Las cards se apilan verticalmente */
+                align-items: center;
+                /* Centra las cards en el contenedor */
+                justify-content: center;
+                /* Centra las cards verticalmente */
+                gap: 20px;
+            }
+
+            .card-lenguaje {
+                flex: 1 1 100%;
+            }
+
+            .lado-izquierdo {
+                width: 100%;
+                /* El lado izquierdo ocupa todo el ancho */
+                height: auto;
+                /* Ajuste dinámico de altura */
+                position: relative;
+                text-align: center;
+                padding: 40px 20px;
+                display: block;
+            }
+
+            .lado-izquierdo h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+            }
+
+            .lado-izquierdo h2 {
+                font-size: 1.2rem;
+                position: relative;
+                text-align: center;
+            }
+
+            .lado-derecho {
+                width: 100%;
+                height: auto;
+                /* Hacer que crezca con el contenido */
+                overflow-y: visible;
+                /* QUITAR SCROLL */
+                padding: 10px;
+                margin-left: 0;
+                margin-top: 50px;
+            }
+
+
+            html,
+            body {
+                overflow-y: auto !important;
+                /* El scroll lo maneja toda la página */
+            }
+
+            .oculto {
+                display: block;
+                /* Mostrar los elementos que estaban ocultos */
+            }
+
+            /* Ocultar el ul (la lista) en pantallas pequeñas */
+            .nav-links {
+                display: block;
+                /* Mantén la visibilidad de la nav-links, pero */
+            }
+
+            .nav-links ul {
+                display: none;
+                /* Oculta la lista de navegación */
+            }
+
+            /* Mostrar solo los iconos sociales dentro de .enlaces */
+            .enlaces {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-top: 20px;
+                /* Separar los iconos de la navegación */
+            }
+
+            /* Estilo para los iconos en móviles */
+            .social-icon {
+                font-size: 2rem;
+                /* Tamaño de los iconos */
+                color: white;
+                /* Color blanco para los iconos */
+                text-decoration: none;
+                /* Elimina el subrayado */
+                transition: color 0.3s ease;
+                /* Transición suave para el color */
+            }
+
+            .social-icon:hover {
+                color: gold;
+                /* Cambia el color a dorado al pasar el ratón */
+            }
+
+            .social-icon i {
+                margin: 0;
+                /* Elimina márgenes alrededor de los iconos */
+            }
+
+            #sobre-mi {
+                margin-top: -50px;
+                /* Ajuste para separar un poco más las secciones */
+            }
+
+            .card {
+                flex-direction: column;
+            }
+
+    }
+    </style>
+</head>
+
+<body>
+    <div class="luz"></div> <!-- Efecto de luz -->
+
+    <div class="container">
+        <!-- Lado Izquierdo (Fijo) -->
+        <div class="lado-izquierdo">
+            <h1>Alejandro Donaire</h1>
+            <h2>Desarrollador Web</h2>
+
+            <!-- Enlaces de navegación -->
+            <nav class="nav-links">
+                <ul>
+                    <li><a href="#sobre-mi">Sobre Mí<span class="estrella">★</span></a></li>
+                    <li><a href="#estudios">Estudios<span class="estrella">★</span></a></li>
+                    <li><a href="#experiencia">Experiencia<span class="estrella">★</span></a></li>
+                    <li><a href="#lenguajes">Lenguajes<span class="estrella">★</span></a></li>
+                    <li><a href="#otros-datos">Otros Datos de Interés<span class="estrella">★</span></a></li>
+                </ul>
+                <div class="enlaces">
+                    <a href="https://www.linkedin.com/in/alejandro-donaire-machío-138590241/" target="_blank"
+                        class="social-icon">
+                        <i class="fab fa-linkedin"></i> <!-- Icono de LinkedIn -->
+                    </a>
+                    <a href="https://github.com/alexdoma2001" target="_blank" class="social-icon">
+                        <i class="fab fa-github"></i> <!-- Icono de GitHub -->
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Lado Derecho (Scrolleable) -->
+        <div class="lado-derecho" id="scroll-container">
+            <section id="sobre-mi">
+                <h2 class="oculto">Sobre Mí</h2>
+                <p class="texto-descriptivo">
+                    ¡Hola! Mi nombre es Alejandro, soy un Desarrollador Web apasionado por la tecnología y la
+                    innovación. <br><br>
+                    Mi camino en el desarrollo comenzó con un curso de <span class="texto-negrita"> programación en
+                        realidad virtual</span>, lo que despertó mi interés por el mundo del software. Luego, profundicé
+                    mis conocimientos con un curso de <span class="texto-negrita">programación web full stack</span>,
+                    donde empecé a dar mis primeros pasos en el desarrollo web y aprendí a desarrollar aplicaciones
+                    tanto en el frontend como en el backend.<br><br>
+                    De esta forma, acabé estudiando el <span class="texto-negrita">Grado Superior en Desarrollo de
+                        Aplicaciones Web (DAW)</span>, una etapa en la que no solo consolidé mis conocimientos, sino que
+                    también desarrollé una gran capacidad de organización, ya que lo compaginé con mi trabajo en Game. A
+                    pesar del reto de estudiar y trabajar al mismo tiempo, logré seguir aprendiendo y creando nuevos
+                    proyectos que me han permitido profundizar aún más en este sector. <br><br>
+                    Algunas de mis habilidades técnicas en este campo incluirían el uso de tecnologías como <span
+                        class="texto-negrita">HTML5, CSS3, JavaScript</span> o <span class="texto-negrita">PHP</span>,
+                    entre otros.
+                </p>
+            </section>
+            <section id="estudios">
+                <h2 class="oculto">Estudios</h2>
+            
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="left-content">
+                            <p class="fecha">SEPT 2022 - JUN 2024</p>
+                        </div>
+                        <div class="right-content">
+                            <h3 class="titulo">Grado Superior en Desarrollo de Aplicaciones Web</h3>
+                            <h4 class="subtitulo">IES Julio Verne - Bargas</h4>
+                            <p class="descripcion">
+                                Adquisición de conocimientos en HTML5, CSS3, XML, XHTML, SQL, PL/SQL, JavaScript y PHP, incluyendo el uso del framework Symfony. <br><br>
+                                Configuración de redes para conexiones entre diferentes máquinas virtuales y servidores web, además de conocimientos sobre la estructura, componentes y funciones esenciales de los ordenadores.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="left-content">
+                            <p class="fecha">ABR 2022 - JUL 2022</p>
+                        </div>
+                        <div class="right-content">
+                            <h3 class="titulo">Programación Web Full Stack</h3>
+                            <h4 class="subtitulo">ADECCO - Madrid</h4>
+                            <p class="descripcion">
+                                Altos conocimientos en el desarrollo Front-End: HTML5, CSS3 y JavaScript, además de conocimientos generales sobre el Back-End con Java y MySQL.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="left-content">
+                            <p class="fecha">FEB 2022 - ABR 2022</p>
+                        </div>
+                        <div class="right-content">
+                            <h3 class="titulo">Auxiliar Técnico en Producción VR y AR</h3>
+                            <h4 class="subtitulo">Yuncos - Toledo</h4>
+                            <p class="descripcion">
+                                Conocimientos en entornos y diseño 3D en programas como SketchUp, Blender y Unreal Engine 4.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Puedes añadir más cards aquí según sea necesario -->
+                </div>
+            </section>
+            
+
+
+            <!-----------------   SECCION EXPERIENCIA   ----------------------------->
+            <section id="experiencia">
+                <h2 class="oculto">Experiencia</h2>
+            
+                <div class="cards-container">
+                    <div class="card">
+                        <div class="left-content">
+                            <p class="fecha">SEPT 2024 - NOV 2024</p>
+                        </div>
+                        <div class="right-content">
+                            <h3 class="titulo">Prácticas en Desarrollo de Aplicaciones Web</h3>
+                            <h4 class="subtitulo">IES Julio Verne - Bargas</h4>
+                            <p class="descripcion">
+                                Participación en el desarrollo y optimización de soluciones web, con énfasis en la programación y extracción automatizada de datos. Entre las actividades realizadas destacan: <br><br>
+                                • Web Scraping: Implementación de scripts en Python para la extracción automatizada de datos desde diversas páginas web, formateados según requisitos específicos. <br><br>
+                                • Desarrollo de una Plataforma de Códigos Promocionales: Diseño y programación de una página web utilizando HTML, CSS, JavaScript y PHP, con funcionalidades como:
+                                <br> &nbsp; &nbsp; &nbsp; - Envío automatizado de códigos de descuento a usuarios específicos vía correo electrónico. <br> &nbsp; &nbsp; &nbsp; - Panel administrativo para la gestión de códigos promocionales, incluyendo la visualización de usuarios destinatarios, control de disponibilidad y verificación del estado de los códigos. <br><br>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="left-content">
+                            <p class="fecha">DIC 2021 - ACTUALIDAD</p>
+                        </div>
+                        <div class="right-content">
+                            <h3 class="titulo">Dependiente</h3>
+                            <h4 class="subtitulo">GAME - Madrid</h4>
+                            <p class="descripcion">
+                                • Dependiente de tienda con diversas funciones como control de stock, cobro y conteo de caja, etc. <br><br>
+                                • Atención personalizada al cliente en el ámbito tecnológico, como ordenadores y portátiles, vendiéndolos por sus características y componentes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+
+            <section id="lenguajes">
+                <h2 class="oculto">Lenguajes</h2>
+                <div class="cards-container-lenguajes">
+                    <div class="card card-lenguaje">
+                        <div class="left-content">
+                            <p>HTML5</p>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="html-progress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="card card-lenguaje">
+                        <div class="left-content">
+                            <p>CSS3</p>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="css-progress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="card card-lenguaje">
+                        <div class="left-content">
+                            <p>JavaScript</p>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="javascript-progress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="card card-lenguaje">
+                        <div class="left-content">
+                            <p>PHP</p>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="php-progress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="card card-lenguaje">
+                        <div class="left-content">
+                            <p>SYMFONY</p>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="symfony-progress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="card card-lenguaje">
+                        <div class="left-content">
+                            <p>SQL</p>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="sql-progress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="card card-lenguaje">
+                        <div class="left-content">
+                            <p>XML</p>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="xml-progress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="card card-lenguaje">
+                        <div class="left-content">
+                            <p>XHTML</p>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" id="xhtml-progress" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="otros-datos">
+                <h2 class="oculto">Otros datos de interés</h2>
+                <div class="cards-container-lenguajes">
+                    <div class="card card-otros">
+                        <p>Carnet de conducir y vehículo propio</p>
+                    </div>
+                    <div class="card card-otros">
+                        <p>Inglés: B2</p>
+                    </div>
+                    <div class="card card-otros">
+                        <p>Disponibilidad horaria completa</p>
+                    </div>
+                </div>
+            </section>
+            
+
+            
+        </div>
+    </div>
+</body>
+<script src="script.js"></script>
+
+</html>
